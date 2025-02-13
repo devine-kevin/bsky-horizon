@@ -1,8 +1,9 @@
 {
-  "name": "vite-template-solid",
-  "version": "0.0.0",
-  "description": "",
+  "name": "bsky-horizon",
+  "version": "0.0.1",
+  "description": "manage bluesky lists",
   "type": "module",
+  "license": "GPL-3.0 license",
   "scripts": {
     "start": "vite",
     "dev": "vite",
@@ -11,12 +12,13 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "typescript": "^5.7.2",
+    "typescript": "^5.7.3",
     "unocss": "^65.4.3",
-    "vite": "^6.0.0",
+    "vite": "^6.1.0",
     "vite-plugin-solid": "^2.11.1"
   },
   "dependencies": {
-    "solid-js": "^1.9.3"
-  }
+    "solid-js": "^1.9.4"
+  },
+  "packageManager": "pnpm@10.3.0"
 }
