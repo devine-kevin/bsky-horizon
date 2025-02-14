@@ -22,12 +22,16 @@ function App() {
 
 function Home() {
   return (
-    <div id="main">
-      <div class="mb-2 flex gap-2 items-center">
-        <div class="i-horizon-logo"></div>
-        <div>bsky - horizon</div>
+    <div
+      id="main"
+      class="w-full"
+    >
+      <div class="flex flex-col items-center gap-y-1 mb-2">
+        <div class="flex items-center gap-x-2">
+          <div class="i-horizon-logo"></div>
+          <div>bsky - horizon</div>
+        </div>
       </div>
-      <div></div>
       <Search />
     </div>
   )

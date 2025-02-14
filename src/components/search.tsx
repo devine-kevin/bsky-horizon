@@ -1,19 +1,5 @@
 import { createSignal } from 'solid-js'
-
-const resolveHandle = async (handle: string) => {
-  try {
-    const response = await fetch(
-      `https://public.api.bsky.app/xrpc/com.atproto.identity.resolveHandle?handle=${handle}`
-    )
-    if (!response.ok) {
-      throw new Error('Handle not found')
-    }
-    const data = await response.json()
-    return data.did
-  } catch (error) {
-    throw error
-  }
-}
+import { getList, resolveHandle } from '../utils/api.js'
 
 async function processInput(formData: FormData) {
   const input = formData.get('input')
@@ -29,10 +15,13 @@ async function processInput(formData: FormData) {
 
   const uriParts = uri.split('/')
   const actor = uriParts[0]
-  return uri.startsWith('did:') ? actor : await resolveHandle(actor)
+  let did: string
+  did = uri.startsWith('did:') ? actor : await resolveHandle(actor)
+  return getList(['at://', did, '/', uriParts.slice(1).join('/')].join(''))
 }
 
 function Search() {
+  const [result, setResult] = createSignal<string | null>(null)
   const [loading, setLoading] = createSignal(false)
 
   const handleSubmit = async (e: Event) => {
@@ -42,6 +31,7 @@ function Search() {
     try {
       const result = await processInput(formData)
       console.log('Form submitted, result:', result)
+      setResult(result)
     } catch (error) {
       console.error('Error during submission:', error)
     } finally {
@@ -74,6 +64,19 @@ function Search() {
           </button>
         </div>
       </form>
+      <Show when={loading()}>
+        <div class="text-gray-500">Searching...</div>
+      </Show>
+      <Show when={result() && result()?.items?.length}>
+        <div class="mt-4 p-2 border rounded">
+          <strong>{result().items.length} People:</strong>
+          <ul>
+            <For each={result()?.items}>
+              {(item) => <li key={item.subject.did}>{item.subject.handle}</li>}
+            </For>
+          </ul>
+        </div>
+      </Show>
     </>
   )
 }
