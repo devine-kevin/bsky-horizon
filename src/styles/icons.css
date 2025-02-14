@@ -1,0 +1,11 @@
+.i-horizon-logo {
+  --un-icon: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" viewBox="0 0 30 30" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><circle r="12" cx="15" cy="15" fill="none" stroke="currentColor" stroke-width="1" /><path d="M4 15h22"></path><path d="M8 19h14"></path><path d="M12 23h6"></path></svg>');
+  -webkit-mask: var(--un-icon) no-repeat;
+  mask: var(--un-icon) no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  background-color: currentColor;
+  color: inherit;
+  width: 1.2em;
+  height: 1.2em;
+}
