@@ -7,6 +7,13 @@ const getList = async (uri: string) => {
       throw new Error('List not found')
     }
     const data = await response.json()
+    /*
+    data.list.sort(
+      (a, b) =>
+        new Date(a.subject.createdAt).getTime() -
+        new Date(b.subject.createdAt).getTime()
+    )
+    */
     return data
   } catch (error) {
     throw error

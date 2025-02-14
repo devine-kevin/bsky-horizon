@@ -1,5 +1,6 @@
 import { createSignal } from 'solid-js'
 import { getList, resolveHandle } from '../utils/api.js'
+import JsonTree from './JsonTree'
 
 async function processInput(formData: FormData) {
   const input = formData.get('input')
@@ -23,6 +24,7 @@ async function processInput(formData: FormData) {
 function Search() {
   const [result, setResult] = createSignal<string | null>(null)
   const [loading, setLoading] = createSignal(false)
+  const [moreListDetails, setMoreListDetails] = createSignal(false)
 
   const handleSubmit = async (e: Event) => {
     e.preventDefault()
@@ -68,11 +70,37 @@ function Search() {
         <div class="text-gray-500">Searching...</div>
       </Show>
       <Show when={result() && result()?.items?.length}>
-        <div class="mt-4 p-2 border rounded">
-          <strong>{result().items.length} People:</strong>
+        <div class="mt-4 p-2">
+          <div class="border-b mb-2 pb-2">
+            <strong>{result().list.name}</strong>
+            <button
+              class="ml-2 bg-inherit text-inherit cursor-pointer"
+              onClick={() => setMoreListDetails(!moreListDetails())}
+            >
+              ...
+            </button>
+            <Show when={moreListDetails()}>
+              <div class="mt-2 p-2 border rounded">
+                <JsonTree data={result().list} />
+              </div>
+            </Show>
+          </div>
           <ul>
-            <For each={result()?.items}>
-              {(item) => <li key={item.subject.did}>{item.subject.handle}</li>}
+            <For each={result().items}>
+              {(item) => (
+                <li
+                  key={item.subject.did}
+                  class="p-2 border-b last:border-none"
+                >
+                  <strong>DID:</strong> {item.subject.did}
+                  <br />
+                  <strong>handle:</strong> {item.subject.handle}
+                  <br />
+                  <strong>displayName:</strong> {item.subject.displayName}
+                  <br />
+                  <strong>createdAt:</strong> {item.subject.createdAt}
+                </li>
+              )}
             </For>
           </ul>
         </div>
@@ -80,11 +108,5 @@ function Search() {
     </>
   )
 }
-
-/*
-      <Show when={submission.error}>
-        {(err) => <div class="mt-3">{err().message}</div>}
-      </Show>
-      */
 
 export default Search
