@@ -7,13 +7,24 @@ const getList = async (uri: string) => {
       throw new Error('List not found')
     }
     const data = await response.json()
-    /*
-    data.list.sort(
-      (a, b) =>
-        new Date(a.subject.createdAt).getTime() -
-        new Date(b.subject.createdAt).getTime()
+    const sortedItems = [...(data.items ?? [])].sort((a, b) =>
+      a.subject.handle.localeCompare(b.subject.handle)
     )
-    */
+    return { ...data, items: sortedItems }
+  } catch (error) {
+    throw error
+  }
+}
+
+const getProfile = async (did: string) => {
+  try {
+    const response = await fetch(
+      `https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=${did}`
+    )
+    if (!response.ok) {
+      throw new Error('Profile not found')
+    }
+    const data = await response.json()
     return data
   } catch (error) {
     throw error
@@ -35,4 +46,4 @@ const resolveHandle = async (handle: string) => {
   }
 }
 
-export { getList, resolveHandle }
+export { getList, getProfile, resolveHandle }

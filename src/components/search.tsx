@@ -1,6 +1,7 @@
-import { createSignal } from 'solid-js'
+import { createSignal, createResource } from 'solid-js'
 import { getList, resolveHandle } from '../utils/api.js'
 import JsonTree from './JsonTree'
+import ItemList from './ItemList'
 
 async function processInput(formData: FormData) {
   const input = formData.get('input')
@@ -85,24 +86,7 @@ function Search() {
               </div>
             </Show>
           </div>
-          <ul>
-            <For each={result().items}>
-              {(item) => (
-                <li
-                  key={item.subject.did}
-                  class="p-2 border-b last:border-none"
-                >
-                  <strong>DID:</strong> {item.subject.did}
-                  <br />
-                  <strong>handle:</strong> {item.subject.handle}
-                  <br />
-                  <strong>displayName:</strong> {item.subject.displayName}
-                  <br />
-                  <strong>createdAt:</strong> {item.subject.createdAt}
-                </li>
-              )}
-            </For>
-          </ul>
+          <ItemList items={result().items} />
         </div>
       </Show>
     </>
