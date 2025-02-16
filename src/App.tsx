@@ -1,5 +1,5 @@
 import { Router, Route } from '@solidjs/router'
-import Search from './components/search'
+import Search from './components/Search'
 import 'virtual:uno.css'
 import './styles/tailwind-compat.css'
 import './styles/index.css'
