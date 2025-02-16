@@ -12,10 +12,6 @@ function App() {
         path="/"
         component={Home}
       />
-      <Route
-        path="/search"
-        component={Search}
-      />
     </Router>
   )
 }

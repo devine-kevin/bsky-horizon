@@ -21,10 +21,27 @@ const ItemList = (props) => {
 
   const sortedItems = createMemo(() => {
     return [...(props.items ?? [])].sort((a, b) => {
+      const sanitize = (str) =>
+        str
+          ?.normalize('NFKD') // Normalize characters (e.g., remove diacritics)
+          .replace(/[^\w\s]/g, '') // Remove special characters
+          .trim()
+          .toLowerCase() || ''
       if (sortBy() === 'createdAt') {
         return sortOrder() === 'ASC'
           ? a.subject.createdAt.localeCompare(b.subject.createdAt)
           : b.subject.createdAt.localeCompare(a.subject.createdAt)
+      }
+      if (sortBy() === 'displayName') {
+        const nameA = sanitize(
+          a.subject.displayName?.trim() || a.subject.handle
+        )
+        const nameB = sanitize(
+          b.subject.displayName?.trim() || b.subject.handle
+        )
+        return sortOrder() === 'ASC'
+          ? nameA.localeCompare(nameB)
+          : nameB.localeCompare(nameA)
       }
       return sortOrder() === 'ASC'
         ? a.subject.handle.localeCompare(b.subject.handle)
@@ -60,10 +77,10 @@ const ItemList = (props) => {
               fetchMoreData
             )
             const handleExpand = (did: string) => {
-              setExpanded(!expanded()) // Toggle expand/collapse
+              setExpanded(!expanded())
               if (!dataLoaded()) {
-                setDataLoaded(true) // Mark as fetched
-                refetch() // Fetch data only once
+                setDataLoaded(true)
+                refetch()
               }
             }
             return (
@@ -96,7 +113,7 @@ const ItemList = (props) => {
                 <br />
                 <strong>DID:</strong> {item.subject.did}
                 <br />
-                <strong>handle:</strong>{' '}
+                <strong>handle:</strong>
                 <span
                   class={`${
                     sortBy() === 'handle' ? 'text-orange' : 'text-slate-100'
@@ -113,7 +130,7 @@ const ItemList = (props) => {
                       : 'text-slate-100'
                   }`}
                 >
-                  {item.subject.displayName}
+                  {item.subject.displayName || item.subject.handle}
                 </span>
                 <br />
                 <strong>createdAt:</strong>
