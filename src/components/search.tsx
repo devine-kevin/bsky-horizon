@@ -73,13 +73,17 @@ function Search() {
       <Show when={result() && result()?.items?.length}>
         <div class="mt-4 p-2">
           <div class="border-b mb-2 pb-2">
-            <strong>{result().list.name}</strong>
-            <button
-              class="ml-2 bg-inherit text-inherit cursor-pointer"
-              onClick={() => setMoreListDetails(!moreListDetails())}
-            >
-              ...
-            </button>
+            <div class="flex justify-start">
+              <div>
+                <strong>{result().list.name}</strong>
+              </div>
+              <button
+                class="ml-2 bg-inherit text-inherit cursor-pointer"
+                onClick={() => setMoreListDetails(!moreListDetails())}
+              >
+                ...
+              </button>
+            </div>
             <Show when={moreListDetails()}>
               <div class="mt-2 p-2 border rounded">
                 <JsonTree data={result().list} />
