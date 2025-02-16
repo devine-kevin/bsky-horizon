@@ -11,6 +11,9 @@ importers:
       '@solidjs/router':
         specifier: ^0.15.3
         version: 0.15.3(solid-js@1.9.4)
+      '@thisbeyond/solid-select':
+        specifier: ^0.15.0
+        version: 0.15.0(solid-js@1.9.4)
       solid-js:
         specifier: ^1.9.4
         version: 1.9.4
@@ -546,6 +549,12 @@ packages:
     resolution: {integrity: sha512-iEbW8UKok2Oio7o6Y4VTzLj+KFCmQPGEpm1fS3xixwFBdclFVBvaQVeibl1jys4cujfAK5Kn6+uG2uBm3lxOMw==}
     peerDependencies:
       solid-js: ^1.8.6
+
+  '@thisbeyond/solid-select@0.15.0':
+    resolution: {integrity: sha512-L3QnA5vm09JWNqLR4QqEIi7cgfs9/1sJbFjyEnPskjKpxEvb4G+Iy5cyd1qhZ2vAIZ9vaLd3udts3kefayPsMg==}
+    engines: {node: '>=18.0.0', pnpm: '>=9.0.0'}
+    peerDependencies:
+      solid-js: ^1.8
 
   '@types/babel__core@7.20.5':
     resolution: {integrity: sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA==}
@@ -1492,6 +1501,10 @@ snapshots:
     optional: true
 
   '@solidjs/router@0.15.3(solid-js@1.9.4)':
+    dependencies:
+      solid-js: 1.9.4
+
+  '@thisbeyond/solid-select@0.15.0(solid-js@1.9.4)':
     dependencies:
       solid-js: 1.9.4
 

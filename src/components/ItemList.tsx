@@ -1,14 +1,9 @@
-import {
-  createSignal,
-  createMemo,
-  createResource,
-  inCleanup,
-  onMount,
-  Show,
-  For,
-} from 'solid-js'
+import { createSignal, createMemo, createResource, Show, For } from 'solid-js'
 import { getProfile } from '../utils/api.js'
 import JsonTree from './JsonTree'
+
+import { Select } from '@thisbeyond/solid-select'
+import '@thisbeyond/solid-select/style.css'
 
 const fetchMoreData = async (did: string) => {
   try {
@@ -24,17 +19,6 @@ const ItemList = (props) => {
   const [sortBy, setSortBy] = createSignal('handle')
   const [sortOrder, setSortOrder] = createSignal('ASC')
 
-  let dropdownRef
-
-  onMount(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef && !dropdownRef.contains(event.target)) {
-        setShowDropdown(false)
-      }
-    }
-    document.addEventListener('click', handleClickOutside)
-    onCleanup(() => document.removeEventListener('click', handleClickOutside))
-  })
   const sortedItems = createMemo(() => {
     return [...(props.items ?? [])].sort((a, b) => {
       if (sortBy() === 'createdAt') {
@@ -50,35 +34,18 @@ const ItemList = (props) => {
 
   return (
     <div>
-      <div
-        class="flex justify-end"
-        ref={dropdownRef}
-      >
-        <button class="i-filter-list"></button>
+      <div class="flex justify-end">
+        <Select
+          class="sort-select w-full dark:bg-dark-100"
+          options={['handle', 'displayName', 'createdAt']}
+          placeholder="handle"
+          onChange={setSortBy}
+        />
+        <span class="i-options-vertical"></span>
         <button
-          class="i-options-vertical"
-          onClick={() => setShowDropdown(!showDropdown())}
-        ></button>
-
-        <Show when={showDropdown()}>
-          <div class="absolute mt-6 transition-opacity">
-            <select
-              id="sort-select"
-              class="p-2 w-full border rounded-lg border-gray-400 dark:bg-dark-100"
-              value={sortBy()}
-              onChange={(e) => {
-                setSortBy(e.currentTarget.value)
-                setShowDropdown(false)
-              }}
-            >
-              <option value="handle">Handle</option>
-              <option value="createdAt">Created At</option>
-            </select>
-          </div>
-        </Show>
-
-        <button
-          class="i-sort-list"
+          class={`${
+            sortOrder() === 'ASC' ? 'i-sort-list-asc' : 'i-sort-list-desc'
+          }`}
           onClick={() => setSortOrder(sortOrder() === 'ASC' ? 'DESC' : 'ASC')}
         ></button>
       </div>
@@ -129,11 +96,36 @@ const ItemList = (props) => {
                 <br />
                 <strong>DID:</strong> {item.subject.did}
                 <br />
-                <strong>handle:</strong> {item.subject.handle}
+                <strong>handle:</strong>{' '}
+                <span
+                  class={`${
+                    sortBy() === 'handle' ? 'text-orange' : 'text-slate-100'
+                  }`}
+                >
+                  {item.subject.handle}
+                </span>
                 <br />
-                <strong>displayName:</strong> {item.subject.displayName}
+                <strong>displayName:</strong>
+                <span
+                  class={`${
+                    sortBy() === 'displayName'
+                      ? 'text-orange'
+                      : 'text-slate-100'
+                  }`}
+                >
+                  {item.subject.displayName}
+                </span>
                 <br />
-                <strong>createdAt:</strong> {item.subject.createdAt}
+                <strong>createdAt:</strong>
+                <span
+                  class={`${
+                    sortBy() === 'createdAt' ? 'text-orange' : 'text-slate-100'
+                  }`}
+                >
+                  {item.subject.createdAt}
+                </span>
+                <br />
+                <strong>description:</strong> {item.subject.description}
                 <Show when={expanded()}>
                   <div class="mt-2 p-2 border rounded">
                     <Show when={data.loading}>

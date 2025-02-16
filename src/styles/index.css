@@ -14,3 +14,28 @@ pre {
   font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco,
     Consolas, 'Liberation Mono', 'Courier New', monospace;
 }
+
+.sort-select {
+  &.solid-select-container {
+    color: #fa7f25;
+  }
+  .solid-select-control {
+    border-color: rgb(156 163 175);
+    &:focus-within {
+      outline-color: rgb(156 163 175);
+    }
+  }
+  .solid-select-placeholder {
+    color: #fa7f25;
+  }
+  .solid-select-option {
+    &:hover {
+      background-color: #fa7f25;
+      color: #fff;
+    }
+    &[data-focused='true'] {
+      background-color: #fca560;
+      color: #fff;
+    }
+  }
+}
