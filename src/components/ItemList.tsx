@@ -1,4 +1,12 @@
-import { createSignal, createMemo, createResource, Show, For } from 'solid-js'
+import {
+  createSignal,
+  createMemo,
+  createResource,
+  inCleanup,
+  onMount,
+  Show,
+  For,
+} from 'solid-js'
 import { getProfile } from '../utils/api.js'
 import JsonTree from './JsonTree'
 
@@ -12,10 +20,28 @@ const fetchMoreData = async (did: string) => {
 }
 
 const ItemList = (props) => {
+  const [showDropdown, setShowDropdown] = createSignal(false)
+  const [sortBy, setSortBy] = createSignal('handle')
   const [sortOrder, setSortOrder] = createSignal('ASC')
 
+  let dropdownRef
+
+  onMount(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef && !dropdownRef.contains(event.target)) {
+        setShowDropdown(false)
+      }
+    }
+    document.addEventListener('click', handleClickOutside)
+    onCleanup(() => document.removeEventListener('click', handleClickOutside))
+  })
   const sortedItems = createMemo(() => {
     return [...(props.items ?? [])].sort((a, b) => {
+      if (sortBy() === 'createdAt') {
+        return sortOrder() === 'ASC'
+          ? a.subject.createdAt.localeCompare(b.subject.createdAt)
+          : b.subject.createdAt.localeCompare(a.subject.createdAt)
+      }
       return sortOrder() === 'ASC'
         ? a.subject.handle.localeCompare(b.subject.handle)
         : b.subject.handle.localeCompare(a.subject.handle)
@@ -24,12 +50,37 @@ const ItemList = (props) => {
 
   return (
     <div>
-      <div class="flex justify-end">
+      <div
+        class="flex justify-end"
+        ref={dropdownRef}
+      >
+        <button class="i-filter-list"></button>
+        <button
+          class="i-options-vertical"
+          onClick={() => setShowDropdown(!showDropdown())}
+        ></button>
+
+        <Show when={showDropdown()}>
+          <div class="absolute mt-6 transition-opacity">
+            <select
+              id="sort-select"
+              class="p-2 w-full border rounded-lg border-gray-400 dark:bg-dark-100"
+              value={sortBy()}
+              onChange={(e) => {
+                setSortBy(e.currentTarget.value)
+                setShowDropdown(false)
+              }}
+            >
+              <option value="handle">Handle</option>
+              <option value="createdAt">Created At</option>
+            </select>
+          </div>
+        </Show>
+
         <button
           class="i-sort-list"
           onClick={() => setSortOrder(sortOrder() === 'ASC' ? 'DESC' : 'ASC')}
         ></button>
-        <button class="i-filter-list"></button>
       </div>
 
       <ul>

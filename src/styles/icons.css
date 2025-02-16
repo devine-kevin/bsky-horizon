@@ -31,3 +31,14 @@
   width: 1.2em;
   height: 1.2em;
 }
+.i-options-vertical {
+  --un-icon: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 30 30" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"%3E%3Ccircle cx="15" cy="5" r="2"%3E%3C/circle%3E%3Ccircle cx="15" cy="15" r="2"%3E%3C/circle%3E%3Ccircle cx="15" cy="25" r="2"%3E%3C/circle%3E%3C/svg%3E');
+  -webkit-mask: var(--un-icon) no-repeat;
+  mask: var(--un-icon) no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  background-color: currentColor;
+  color: inherit;
+  width: 1.2em;
+  height: 1.2em;
+}
