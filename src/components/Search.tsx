@@ -1,5 +1,10 @@
 import { createSignal, createResource } from 'solid-js'
-import { getList, resolveHandle } from '../utils/api.js'
+import {
+  getList,
+  getStarterPack,
+  normalizeUri,
+  resolveHandle,
+} from '../utils/api.js'
 import JsonTree from './JsonTree'
 import ListDetails from './ListDetails'
 import ItemList from './ItemList'
@@ -7,22 +12,21 @@ import ItemList from './ItemList'
 async function processInput(formData: FormData) {
   const input = formData.get('input')
   ;(document.getElementById('uriForm') as HTMLFormElement).reset()
-
   if (!input) {
     throw new Error('Input is required')
   }
-
-  const uri = input
-    .replace('at://', '')
-    .replace('https://bsky.app/profile/', '')
-    .replace('https://main.bsky.dev/profile/', '')
-    .replace('/lists/', '/app.bsky.graph.list/')
-
+  const uri = normalizeUri(input)
   const uriParts = uri.split('/')
-  const actor = uriParts[0]
-  let did: string
-  did = uri.startsWith('did:') ? actor : await resolveHandle(actor)
-  return getList(['at://', did, '/', uriParts.slice(1).join('/')].join(''))
+  let data
+  if (uriParts.includes('app.bsky.graph.starterpack')) {
+    data = await getStarterPack(uri)
+    data.collection = 'app.bsky.graph.starterpack'
+  } else {
+    data = await getList(uri)
+    data.collection = 'app.bsky.graph.list'
+  }
+  console.log('List result:', data)
+  return data
 }
 
 function Search() {
@@ -45,6 +49,8 @@ function Search() {
       console.log('Form submitted, result:', result)
       setResult(result)
     } catch (error) {
+      console.log('Error:', error.message)
+      console.error(error)
       setError(error.message)
     } finally {
       setLoading(false)
@@ -77,15 +83,22 @@ function Search() {
         </div>
       </form>
       <Show when={loading()}>
-        <div class="text-gray-500">Searching...</div>
+        <div class="mt-4 p-2 text-gray-500 text-center">Searching...</div>
       </Show>
       <Show when={error()}>
-        <div class="text-red-500">{error()}</div>
+        <div class="mt-4 p-2 text-red-500 text-center">{error()}</div>
       </Show>
-      <Show when={result() && result()?.items?.length}>
+      <Show when={result()}>
         <div class="mt-4 p-2">
-          <ListDetails list={result().list} />
-          <ItemList items={result().items} />
+          <Show when={result().collection === 'app.bsky.graph.starterpack'}>
+            <JsonTree data={result().starterPack} />
+          </Show>
+          <Show when={result().collection === 'app.bsky.graph.list'}>
+            <ListDetails list={result().list} />
+          </Show>
+          <Show when={result().items?.length}>
+            <ItemList items={result().items} />
+          </Show>
         </div>
       </Show>
     </>

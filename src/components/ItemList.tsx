@@ -7,8 +7,7 @@ import '@thisbeyond/solid-select/style.css'
 
 const fetchMoreData = async (did: string) => {
   try {
-    const data = await getProfile(did)
-    return data
+    return await getProfile(did)
   } catch (error) {
     return { error: 'Failed to load data', message: error.message }
   }
@@ -29,8 +28,8 @@ const ItemList = (props) => {
           .toLowerCase() || ''
       if (sortBy() === 'createdAt') {
         return sortOrder() === 'ASC'
-          ? a.subject.createdAt.localeCompare(b.subject.createdAt)
-          : b.subject.createdAt.localeCompare(a.subject.createdAt)
+          ? new Date(a.subject.createdAt) - new Date(b.subject.createdAt)
+          : new Date(b.subject.createdAt) - new Date(a.subject.createdAt)
       }
       if (sortBy() === 'displayName') {
         const nameA = sanitize(
@@ -86,31 +85,32 @@ const ItemList = (props) => {
             return (
               <li
                 key={item.subject.did}
-                class="p-2 border-b last:border-none"
+                class="pt-2 pb-2 border-b last:border-none"
               >
-                <span>
-                  -{' '}
-                  <a
-                    href={`https://bsky.app/profile/${item.subject.handle}`}
-                    class="text-blue-500"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {item.subject.handle}
-                  </a>
-                </span>
-                <button
-                  class="ml-2 bg-inherit text-inherit cursor-pointer"
-                  onClick={() => handleExpand(item.subject.did)}
-                  disabled={data.loading}
-                >
-                  [
-                  <span class="hover:underline">
-                    {expanded() ? 'Less' : 'More'}
+                <div class="flex justify-between">
+                  <span>
+                    -{' '}
+                    <a
+                      href={`https://bsky.app/profile/${item.subject.handle}`}
+                      class="text-blue-500"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {item.subject.handle}
+                    </a>
                   </span>
-                  ]
-                </button>
-                <br />
+                  <button
+                    class="ml-2 bg-inherit text-inherit cursor-pointer"
+                    onClick={() => handleExpand(item.subject.did)}
+                    disabled={data.loading}
+                  >
+                    [
+                    <span class="hover:underline">
+                      {expanded() ? 'Less' : 'More'}
+                    </span>
+                    ]
+                  </button>
+                </div>
                 <strong>DID:</strong> {item.subject.did}
                 <br />
                 <strong>handle:</strong>
@@ -149,7 +149,10 @@ const ItemList = (props) => {
                       <p class="text-gray-500">Loading...</p>
                     </Show>
                     <Show when={data()}>
-                      <JsonTree data={data()} />
+                      <JsonTree
+                        data={data()}
+                        sortBy={sortBy()}
+                      />
                     </Show>
                   </div>
                 </Show>

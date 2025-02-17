@@ -6,7 +6,7 @@ const ListDetails = (props) => {
 
   return (
     <div class="border-b mb-2 pb-2">
-      <div class="flex justify-start">
+      <div class="flex justify-between">
         <div>
           <strong>{props.list.name}</strong>
         </div>
