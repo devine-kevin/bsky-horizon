@@ -50,30 +50,36 @@ const getProfile = async (did: string) => {
   }
 }
 
-const normalizeUri = (uri: string) => {
+const normalizeUri = async (uri: string) => {
   let authority: string
   let collection: string
   let rkey: string
 
+  if (uri.includes('go.bsky.app')) {
+    try {
+      uri = await fetchRedirectedUri(uri)
+    } catch (error) {
+      throw error
+    }
+  }
+
   const atUri = uri
     .replace('at://', '')
     .replace('https://', '')
-    .replace('bsky.app/profile/', '')
-    .replace('main.bsky.dev/profile/', '')
+    .replace('bsky.app/', '')
+    .replace('main.bsky.dev/', '')
+    .replace('profile/', '')
     .replace('starter-pack', 'app.bsky.graph.getStarterPack')
     .replace('lists', 'app.bsky.graph.list')
 
   const uriParts = atUri.split('/')
 
-  if (uriParts.includes('go.bsky.app')) {
-    throw new Error('Invalid URI:: ' + uri)
-  }
   if (uriParts.includes('app.bsky.graph.list')) {
     authority = uriParts[0]
     collection = uriParts[1]
     rkey = uriParts[2]
   }
-  if (uriParts.includes('app.bsky.graph.getStartPack')) {
+  if (uriParts.includes('app.bsky.graph.getStarterPack')) {
     authority = uriParts[1]
     collection = 'app.bsky.graph.starterpack'
     rkey = uriParts[2]
@@ -85,6 +91,25 @@ const normalizeUri = (uri: string) => {
   }
 
   return `at://${authority}/${collection}/${rkey}`
+}
+
+const fetchRedirectedUri = async (uri: string) => {
+  try {
+    const response = await fetch(
+      `https://kvndvn.social/api/goBsky?url=${uri}`,
+      {
+        method: 'GET',
+        mode: 'cors',
+      }
+    )
+    const data = await response.json()
+    if (!data.location) {
+      throw new Error('List location not found')
+    }
+    return data.location.replace('start', 'starter-pack')
+  } catch (error) {
+    throw new Error('Invalid URI: ' + uri)
+  }
 }
 
 const resolveHandle = async (handle: string) => {

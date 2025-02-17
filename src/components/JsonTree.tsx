@@ -15,6 +15,10 @@ const JsonTree = (props: JsonTreeProps) => {
         {([key, value]) => {
           const [expanded, setExpanded] = createSignal(false)
           const isObject = typeof value === 'object' && value !== null
+          const isAtUri =
+            typeof value === 'string' &&
+            value.startsWith('at://') &&
+            value.includes('app.bsky.graph.list')
 
           return (
             <li class="mb-1 text-pretty">
@@ -28,13 +32,24 @@ const JsonTree = (props: JsonTreeProps) => {
               </Show>
               <strong class="pr-1">{key}:</strong>
               <Show when={!isObject}>
-                <span
-                  class={`${
-                    props.sortBy === key ? 'text-orange' : 'text-slate-100'
-                  }`}
-                >
-                  {String(value)}
-                </span>
+                <Show when={isAtUri}>
+                  <a
+                    class="text-blue-500"
+                    href={`http://localhost:3000/${value}`}
+                    rel="noopener noreferrer"
+                  >
+                    {value}
+                  </a>
+                </Show>
+                <Show when={!isAtUri}>
+                  <span
+                    class={`${
+                      props.sortBy === key ? 'text-orange' : 'text-slate-100'
+                    }`}
+                  >
+                    {String(value)}
+                  </span>
+                </Show>
               </Show>
               <Show when={isObject && expanded()}>
                 <JsonTree

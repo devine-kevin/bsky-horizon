@@ -15,7 +15,7 @@ async function processInput(formData: FormData) {
   if (!input) {
     throw new Error('Input is required')
   }
-  const uri = normalizeUri(input)
+  const uri = await normalizeUri(input)
   const uriParts = uri.split('/')
   let data
   if (uriParts.includes('app.bsky.graph.starterpack')) {
