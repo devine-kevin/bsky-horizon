@@ -1,5 +1,6 @@
 import { Router, Route } from '@solidjs/router'
-import Search from './components/Search'
+import Home from './views/Home'
+import RecordView from './views/RecordView'
 import 'virtual:uno.css'
 import './styles/tailwind-compat.css'
 import './styles/index.css'
@@ -12,24 +13,11 @@ function App() {
         path="/"
         component={Home}
       />
+      <Route
+        path="/:at/:repo/:collection/:rkey"
+        component={RecordView}
+      />
     </Router>
-  )
-}
-
-function Home() {
-  return (
-    <div
-      id="main"
-      class="w-full"
-    >
-      <div class="flex flex-col items-center gap-y-1 mb-2">
-        <div class="flex items-center gap-x-2">
-          <div class="i-horizon-logo"></div>
-          <div>bsky - horizon</div>
-        </div>
-      </div>
-      <Search />
-    </div>
   )
 }
 

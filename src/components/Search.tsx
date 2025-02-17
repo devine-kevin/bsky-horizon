@@ -46,11 +46,8 @@ function Search() {
     setLoading(true)
     try {
       const result = await processInput(formData)
-      console.log('Form submitted, result:', result)
       setResult(result)
     } catch (error) {
-      console.log('Error:', error.message)
-      console.error(error)
       setError(error.message)
     } finally {
       setLoading(false)
