@@ -1,22 +1,21 @@
 import { createSignal, onMount } from 'solid-js'
 import { useParams } from '@solidjs/router'
-import { getList, getStarterPack } from '../utils/api.js'
+import { getList, getStarterPack, normalizeUri } from '../utils/api.js'
 import PageHeader from '../components/PageHeader'
 import JsonTree from '../components/JsonTree'
 import ListDetails from '../components/ListDetails'
 import ItemList from '../components/ItemList'
 
 async function getRecord(args) {
-  console.log('args:', args)
+  const uri = await normalizeUri('at://' + args.join('/'))
   let data
   if (args.includes('app.bsky.graph.starterpack')) {
-    data = await getStarterPack('at://' + args.join('/'))
+    data = await getStarterPack(uri)
     data.collection = 'app.bsky.graph.starterpack'
   } else {
-    data = await getList('at://' + args.join('/'))
+    data = await getList(uri)
     data.collection = 'app.bsky.graph.list'
   }
-  console.log('List result:', data)
   return data
 }
 

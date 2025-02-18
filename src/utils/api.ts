@@ -90,6 +90,7 @@ const normalizeUri = async (uri: string) => {
     rkey = uriParts[2]
   }
 
+  console.log(`at://${authority}/${collection}/${rkey}`)
   return `at://${authority}/${collection}/${rkey}`
 }
 
