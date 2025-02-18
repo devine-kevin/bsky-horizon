@@ -35,7 +35,7 @@ const JsonTree = (props: JsonTreeProps) => {
                 <Show when={isAtUri}>
                   <a
                     class="text-blue-500"
-                    href={`http://localhost:3000/${value}`}
+                    href={`/${value.replace('at://', 'at/')}`}
                     rel="noopener noreferrer"
                   >
                     {value}

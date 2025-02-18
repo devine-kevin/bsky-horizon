@@ -8,7 +8,7 @@ import './styles/icons.css'
 
 function App() {
   return (
-    <Router>
+    <Router source="history">
       <Route
         path="/"
         component={Home}
