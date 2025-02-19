@@ -85,7 +85,7 @@ const ItemList = (props) => {
             return (
               <li
                 key={item.subject.did}
-                class="pt-2 pb-2 border-b last:border-none"
+                class="pt-2 pb-2 overflow-y-scroll overscroll-y-auto overscroll-x-contain no-scrollbar border-b last:border-none"
               >
                 <div class="flex justify-between">
                   <span>
