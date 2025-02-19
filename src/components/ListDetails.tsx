@@ -18,7 +18,7 @@ const ListDetails = (props) => {
         </button>
       </div>
       <Show when={expanded()}>
-        <div class="mt-2 p-2 border rounded">
+        <div class="mt-2 p-2 border rounded overflow-scroll">
           <JsonTree data={props.list} />
         </div>
       </Show>
