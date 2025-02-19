@@ -14,7 +14,7 @@ function App() {
         component={Home}
       />
       <Route
-        path="/at/:repo/:collection/:rkey"
+        path="/:at/:repo/:collection/:rkey"
         component={RecordView}
       />
       <Route
