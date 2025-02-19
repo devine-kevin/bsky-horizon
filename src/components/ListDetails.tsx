@@ -1,5 +1,6 @@
 import { createSignal, Show } from 'solid-js'
 import JsonTree from './JsonTree'
+import BlueskyLink from './BlueskyLink'
 
 const ListDetails = (props) => {
   const [expanded, setExpanded] = createSignal(false)
@@ -8,7 +9,10 @@ const ListDetails = (props) => {
     <div class="border-b mb-2 pb-2">
       <div class="flex justify-between">
         <div>
-          <strong>{props.list.name}</strong>
+          <div class="flex gap-2">
+            <BlueskyLink aturi={props.list.uri} />
+            <strong>{props.list.name}</strong>
+          </div>
         </div>
         <button
           class="ml-2 bg-inherit text-inherit cursor-pointer"
