@@ -1,4 +1,4 @@
-import { createSignal, onMount } from 'solid-js'
+import { createEffect, createSignal } from 'solid-js'
 import { useParams } from '@solidjs/router'
 import { getList, getStarterPack, normalizeUri } from '../utils/api.js'
 import PageHeader from '../components/PageHeader'
@@ -26,7 +26,7 @@ function RecordView() {
   const [loading, setLoading] = createSignal(false)
   const [moreListDetails, setMoreListDetails] = createSignal(false)
 
-  onMount(async () => {
+  createEffect(async () => {
     setLoading(true)
     try {
       const data = await getRecord([
