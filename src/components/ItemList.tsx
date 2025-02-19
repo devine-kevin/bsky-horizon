@@ -1,13 +1,14 @@
 import { createSignal, createMemo, createResource, Show, For } from 'solid-js'
-import { getProfile } from '../utils/api.js'
+import { getProfile, getProfiles } from '../utils/api.js'
 import JsonTree from './JsonTree'
 
 import { Select } from '@thisbeyond/solid-select'
 import '@thisbeyond/solid-select/style.css'
 
-const fetchMoreData = async (did: string) => {
+const fetchProfiles = async (dids: string) => {
   try {
-    return await getProfile(did)
+    const data = await getProfiles(dids)
+    return data
   } catch (error) {
     return { error: 'Failed to load data', message: error.message }
   }
@@ -18,34 +19,62 @@ const ItemList = (props) => {
   const [sortBy, setSortBy] = createSignal('handle')
   const [sortOrder, setSortOrder] = createSignal('ASC')
 
+  const [profiles] = createResource(
+    () => props.items.map((item) => item.subject.did),
+    fetchProfiles
+  )
+
   const sortedItems = createMemo(() => {
-    return [...(props.items ?? [])].sort((a, b) => {
-      const sanitize = (str) =>
-        str
-          ?.normalize('NFKD') // Normalize characters (e.g., remove diacritics)
-          .replace(/[^\w\s]/g, '') // Remove special characters
-          .trim()
-          .toLowerCase() || ''
-      if (sortBy() === 'createdAt') {
-        return sortOrder() === 'ASC'
-          ? new Date(a.subject.createdAt) - new Date(b.subject.createdAt)
-          : new Date(b.subject.createdAt) - new Date(a.subject.createdAt)
-      }
-      if (sortBy() === 'displayName') {
+    const profileData = profiles()
+    const orderMultiplier = sortOrder() === 'ASC' ? 1 : -1
+
+    const sanitize = (str) =>
+      str
+        ?.normalize('NFKD')
+        .replace(/[^\w\s]/g, '')
+        .trim()
+        .toLowerCase() || ''
+
+    const sortFunctions = {
+      createdAt: (a, b) =>
+        (new Date(a.subject.createdAt) - new Date(b.subject.createdAt)) *
+        orderMultiplier,
+
+      displayName: (a, b) => {
         const nameA = sanitize(
           a.subject.displayName?.trim() || a.subject.handle
         )
         const nameB = sanitize(
           b.subject.displayName?.trim() || b.subject.handle
         )
-        return sortOrder() === 'ASC'
-          ? nameA.localeCompare(nameB)
-          : nameB.localeCompare(nameA)
-      }
-      return sortOrder() === 'ASC'
-        ? a.subject.handle.localeCompare(b.subject.handle)
-        : b.subject.handle.localeCompare(a.subject.handle)
-    })
+        return nameA.localeCompare(nameB) * orderMultiplier
+      },
+
+      followersCount: (a, b) => {
+        const followersA = profileData?.[a.subject.did]?.followersCount ?? 0
+        const followersB = profileData?.[b.subject.did]?.followersCount ?? 0
+        return (followersA - followersB) * orderMultiplier
+      },
+
+      followsCount: (a, b) => {
+        const followsA = profileData?.[a.subject.did]?.followsCount ?? 0
+        const followsB = profileData?.[b.subject.did]?.followsCount ?? 0
+        return (followsA - followsB) * orderMultiplier
+      },
+
+      postsCount: (a, b) => {
+        const postsA = profileData?.[a.subject.did]?.postsCount ?? 0
+        const postsB = profileData?.[b.subject.did]?.postsCount ?? 0
+        return (postsA - postsB) * orderMultiplier
+      },
+
+      handle: (a, b) =>
+        a.subject.handle.localeCompare(b.subject.handle) * orderMultiplier,
+    }
+
+    return [...(props.items ?? [])].sort(
+      sortFunctions[sortBy()] || sortFunctions.handle
+    )
   })
 
   return (
@@ -53,7 +82,14 @@ const ItemList = (props) => {
       <div class="flex justify-end">
         <Select
           class="sort-select w-full dark:bg-dark-100"
-          options={['handle', 'displayName', 'createdAt']}
+          options={[
+            'handle',
+            'displayName',
+            'createdAt',
+            'followersCount',
+            'followsCount',
+            'postsCount',
+          ]}
           placeholder="handle"
           onChange={setSortBy}
         />
@@ -70,18 +106,8 @@ const ItemList = (props) => {
         <For each={sortedItems()}>
           {(item) => {
             const [expanded, setExpanded] = createSignal(false)
-            const [dataLoaded, setDataLoaded] = createSignal(false)
-            const [data, { refetch }] = createResource(
-              () => (dataLoaded() ? item.subject.did : null),
-              fetchMoreData
-            )
-            const handleExpand = (did: string) => {
-              setExpanded(!expanded())
-              if (!dataLoaded()) {
-                setDataLoaded(true)
-                refetch()
-              }
-            }
+            const profileData = () => profiles()?.[item.subject.did]
+
             return (
               <li
                 key={item.subject.did}
@@ -101,8 +127,7 @@ const ItemList = (props) => {
                   </span>
                   <button
                     class="ml-2 bg-inherit text-inherit cursor-pointer"
-                    onClick={() => handleExpand(item.subject.did)}
-                    disabled={data.loading}
+                    onClick={() => setExpanded(!expanded())}
                   >
                     [
                     <span class="hover:underline">
@@ -143,14 +168,48 @@ const ItemList = (props) => {
                 </span>
                 <br />
                 <strong>description:</strong> {item.subject.description}
+                <Show
+                  when={[
+                    'followersCount',
+                    'followsCount',
+                    'postsCount',
+                  ].includes(sortBy())}
+                >
+                  <div class="flex justify-end p-1 gap-2 bg-dark-100 border border-slate-700 rounded">
+                    <Show when={sortBy() === 'followersCount'}>
+                      <div>
+                        <strong>followers:</strong>
+                        <span class="text-orange">
+                          {profileData().followersCount}
+                        </span>
+                      </div>
+                    </Show>
+                    <Show when={sortBy() === 'followsCount'}>
+                      <div>
+                        <strong>follows:</strong>
+                        <span class="text-orange">
+                          {profileData().followsCount}
+                        </span>
+                      </div>
+                    </Show>
+                    <Show when={sortBy() === 'postsCount'}>
+                      <div>
+                        <strong>posts:</strong>
+                        <span class="text-orange">
+                          {profileData().postsCount}
+                        </span>
+                      </div>
+                    </Show>
+                  </div>
+                </Show>
                 <Show when={expanded()}>
                   <div class="mt-2 p-2 border rounded overflow-scroll">
-                    <Show when={data.loading}>
+                    <Show when={profiles.loading}>
                       <p class="text-gray-500">Loading...</p>
                     </Show>
-                    <Show when={data()}>
+                    <Show when={profileData()}>
                       <JsonTree
-                        data={data()}
+                        data={profileData()}
                         sortBy={sortBy()}
                       />
                     </Show>

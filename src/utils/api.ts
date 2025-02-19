@@ -50,6 +50,38 @@ const getProfile = async (did: string) => {
   }
 }
 
+const getProfiles = async (actors: string[]) => {
+  const MAX_ACTORS_PER_REQUEST = 25
+  const batches = []
+
+  for (let i = 0; i < actors.length; i += MAX_ACTORS_PER_REQUEST) {
+    batches.push(actors.slice(i, i + MAX_ACTORS_PER_REQUEST))
+  }
+
+  const responses = await Promise.all(
+    batches.map(async (batch) => {
+      const url = new URL(
+        'https://public.api.bsky.app/xrpc/app.bsky.actor.getProfiles'
+      )
+      batch.forEach((actor) => url.searchParams.append('actors[]', actor))
+      try {
+        const response = await fetch(url)
+        if (!response.ok)
+          throw new Error(`HTTP error! status: ${response.status}`)
+        return response.json()
+      } catch (error) {
+        return null
+      }
+    })
+  )
+  const allProfilesArray = responses.map((res) => res.profiles).flat()
+  const allProfiles = allProfilesArray.reduce((acc, profile) => {
+    acc[profile.did] = profile
+    return acc
+  }, {})
+  return allProfiles
+}
+
 const normalizeUri = async (uri: string) => {
   let authority: string
   let collection: string
@@ -89,8 +121,6 @@ const normalizeUri = async (uri: string) => {
     collection = uriParts[1]
     rkey = uriParts[2]
   }
-
-  console.log(`at://${authority}/${collection}/${rkey}`)
   return `at://${authority}/${collection}/${rkey}`
 }
 
@@ -131,4 +161,11 @@ const resolveHandle = async (handle: string) => {
   }
 }
 
-export { getList, getProfile, getStarterPack, normalizeUri, resolveHandle }
+export {
+  getList,
+  getProfile,
+  getProfiles,
+  getStarterPack,
+  normalizeUri,
+  resolveHandle,
+}
