@@ -1,4 +1,7 @@
+import { useCronitor } from '../utils/cronitor'
+
 function PageHeader() {
+  useCronitor()
   return (
     <div class="flex flex-col items-center gap-y-1 mb-2">
       <div class="flex items-center gap-x-2">

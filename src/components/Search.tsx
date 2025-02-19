@@ -1,4 +1,4 @@
-import { createSignal, createResource } from 'solid-js'
+import { createSignal } from 'solid-js'
 import {
   getList,
   getStarterPack,

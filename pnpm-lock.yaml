@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@cronitorio/cronitor-rum':
+        specifier: ^0.4.1
+        version: 0.4.1
       '@solidjs/router':
         specifier: ^0.15.3
         version: 0.15.3(solid-js@1.9.4)
@@ -119,6 +122,9 @@ packages:
   '@babel/types@7.26.8':
     resolution: {integrity: sha512-eUuWapzEGWFEpHFxgEaBG8e3n6S8L3MSu0oda755rOfabWPnh0Our1AozNFVUxGFIhbKgd1ksprsoDGMinTOTA==}
     engines: {node: '>=6.9.0'}
+
+  '@cronitorio/cronitor-rum@0.4.1':
+    resolution: {integrity: sha512-myOOC8Cvv+881hasEV/fsnUswKXMVKfHtioZIy5SCcRPvH2jCV7T/DyZLXjm97FaeWIfTlu4s5P0dKW1zi7T3A==}
 
   '@esbuild/aix-ppc64@0.23.1':
     resolution: {integrity: sha512-6VhYk1diRqrhBAqpJEdjASR/+WVRtfjpqKuNw11cLiaWpAT/Uu+nokB+UJnevzy/P9C/ty6AOe0dwueMrGh/iQ==}
@@ -1127,6 +1133,9 @@ packages:
       typescript:
         optional: true
 
+  web-vitals@3.5.2:
+    resolution: {integrity: sha512-c0rhqNcHXRkY/ogGDJQxZ9Im9D19hDihbzSQJrsioex+KnFgmMzBiy57Z1EjkhX/+OjyBpclDCzz2ITtjokFmg==}
+
   yallist@3.1.1:
     resolution: {integrity: sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g==}
 
@@ -1253,6 +1262,10 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 7.25.9
       '@babel/helper-validator-identifier': 7.25.9
+
+  '@cronitorio/cronitor-rum@0.4.1':
+    dependencies:
+      web-vitals: 3.5.2
 
   '@esbuild/aix-ppc64@0.23.1':
     optional: true
@@ -2194,5 +2207,7 @@ snapshots:
       '@vue/shared': 3.5.13
     optionalDependencies:
       typescript: 5.7.3
+
+  web-vitals@3.5.2: {}
 
   yallist@3.1.1: {}
