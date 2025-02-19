@@ -144,7 +144,7 @@ const ItemList = (props) => {
                 <br />
                 <strong>description:</strong> {item.subject.description}
                 <Show when={expanded()}>
-                  <div class="mt-2 p-2 border rounded">
+                  <div class="mt-2 p-2 border rounded overflow-scroll">
                     <Show when={data.loading}>
                       <p class="text-gray-500">Loading...</p>
                     </Show>
