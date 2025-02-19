@@ -168,38 +168,44 @@ const ItemList = (props) => {
                 </span>
                 <br />
                 <strong>description:</strong> {item.subject.description}
-                <Show
-                  when={[
-                    'followersCount',
-                    'followsCount',
-                    'postsCount',
-                  ].includes(sortBy())}
-                >
-                  <div class="flex justify-end p-1 gap-2 bg-dark-100 border border-slate-700 rounded">
-                    <Show when={sortBy() === 'followersCount'}>
-                      <div>
-                        <strong>followers:</strong>
-                        <span class="text-orange">
-                          {profileData().followersCount}
-                        </span>
-                      </div>
-                    </Show>
-                    <Show when={sortBy() === 'followsCount'}>
-                      <div>
-                        <strong>follows:</strong>
-                        <span class="text-orange">
-                          {profileData().followsCount}
-                        </span>
-                      </div>
-                    </Show>
-                    <Show when={sortBy() === 'postsCount'}>
-                      <div>
-                        <strong>posts:</strong>
-                        <span class="text-orange">
-                          {profileData().postsCount}
-                        </span>
-                      </div>
-                    </Show>
+                <Show when={profileData()}>
+                  <div>
+                    <div>
+                      <strong>posts:</strong>
+                      <span
+                        class={`${
+                          sortBy() === 'postsCount'
+                            ? 'text-orange'
+                            : 'text-slate-100'
+                        }`}
+                      >
+                        {profileData().postsCount}
+                      </span>
+                    </div>
+                    <div>
+                      <strong>follows:</strong>
+                      <span
+                        class={`${
+                          sortBy() === 'followsCount'
+                            ? 'text-orange'
+                            : 'text-slate-100'
+                        }`}
+                      >
+                        {profileData().followsCount}
+                      </span>
+                    </div>
+                    <div>
+                      <strong>followersCount:</strong>
+                      <span
+                        class={`${
+                          sortBy() === 'followersCount'
+                            ? 'text-orange'
+                            : 'text-slate-100'
+                        }`}
+                      >
+                        {profileData().followersCount}
+                      </span>
+                    </div>
                   </div>
                 </Show>
                 <Show when={expanded()}>
