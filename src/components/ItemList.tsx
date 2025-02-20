@@ -158,9 +158,9 @@ const ItemList = (props) => {
                 <Show when={profileData()}>
                   <div class="flex">
                     <div class="border-r border-gray-500 pr-1">
-                      <strong>posts:</strong>
-                      <span class={getSortClass('postsCount')}>
-                        {profileData().postsCount}
+                      <strong>followers:</strong>
+                      <span class={getSortClass('followersCount')}>
+                        {profileData().followersCount}
                       </span>
                     </div>
                     <div class="pl-1 pr-1 border-r border-gray-500">
@@ -170,9 +170,9 @@ const ItemList = (props) => {
                       </span>
                     </div>
                     <div class="pl-1">
-                      <strong>followersCount:</strong>
-                      <span class={getSortClass('followersCount')}>
-                        {profileData().followersCount}
+                      <strong>posts:</strong>
+                      <span class={getSortClass('postsCount')}>
+                        {profileData().postsCount}
                       </span>
                     </div>
                   </div>
