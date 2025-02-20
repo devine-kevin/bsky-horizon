@@ -13,7 +13,6 @@ const fetchProfiles = async (dids: string) => {
     return { error: 'Failed to load data', message: error.message }
   }
 }
-
 const ItemList = (props) => {
   const [showDropdown, setShowDropdown] = createSignal(false)
   const [sortBy, setSortBy] = createSignal('handle')
@@ -23,6 +22,9 @@ const ItemList = (props) => {
     () => props.items.map((item) => item.subject.did),
     fetchProfiles
   )
+  const getSortClass = (field) => {
+    return sortBy() === field ? 'text-orange' : 'text-slate-100'
+  }
 
   const sortedItems = createMemo(() => {
     const profileData = profiles()
@@ -136,78 +138,47 @@ const ItemList = (props) => {
                     ]
                   </button>
                 </div>
-                <strong>DID:</strong> {item.subject.did}
+                <strong>DID:</strong>
+                {item.subject.did}
                 <br />
                 <strong>handle:</strong>
-                <span
-                  class={`${
-                    sortBy() === 'handle' ? 'text-orange' : 'text-slate-100'
-                  }`}
-                >
+                <span class={getSortClass('handle')}>
                   {item.subject.handle}
                 </span>
                 <br />
                 <strong>displayName:</strong>
-                <span
-                  class={`${
-                    sortBy() === 'displayName'
-                      ? 'text-orange'
-                      : 'text-slate-100'
-                  }`}
-                >
+                <span class={getSortClass('displayName')}>
                   {item.subject.displayName || item.subject.handle}
                 </span>
                 <br />
                 <strong>createdAt:</strong>
-                <span
-                  class={`${
-                    sortBy() === 'createdAt' ? 'text-orange' : 'text-slate-100'
-                  }`}
-                >
+                <span class={getSortClass('createdAt')}>
                   {item.subject.createdAt}
                 </span>
-                <br />
-                <strong>description:</strong> {item.subject.description}
                 <Show when={profileData()}>
-                  <div>
-                    <div>
+                  <div class="flex">
+                    <div class="border-r border-gray-500 pr-1">
                       <strong>posts:</strong>
-                      <span
-                        class={`${
-                          sortBy() === 'postsCount'
-                            ? 'text-orange'
-                            : 'text-slate-100'
-                        }`}
-                      >
+                      <span class={getSortClass('postsCount')}>
                         {profileData().postsCount}
                       </span>
                     </div>
-                    <div>
+                    <div class="pl-1 pr-1 border-r border-gray-500">
                       <strong>follows:</strong>
-                      <span
-                        class={`${
-                          sortBy() === 'followsCount'
-                            ? 'text-orange'
-                            : 'text-slate-100'
-                        }`}
-                      >
+                      <span class={getSortClass('followsCount')}>
                         {profileData().followsCount}
                       </span>
                     </div>
-                    <div>
+                    <div class="pl-1">
                       <strong>followersCount:</strong>
-                      <span
-                        class={`${
-                          sortBy() === 'followersCount'
-                            ? 'text-orange'
-                            : 'text-slate-100'
-                        }`}
-                      >
+                      <span class={getSortClass('followersCount')}>
                         {profileData().followersCount}
                       </span>
                     </div>
                   </div>
                 </Show>
+                <strong>description:</strong>
+                <span>{item.subject.description}</span>
                 <Show when={expanded()}>
                   <div class="mt-2 p-2 border rounded overflow-scroll">
                     <Show when={profiles.loading}>
