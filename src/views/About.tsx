@@ -19,7 +19,7 @@ function Home() {
               <div class="mt-2 text-left text-xs space-y-2">
                 <div class="mb-6">
                   <p>
-                    <span class="inline-block w-40">PROGRAMMER</span>
+                    <span class="inline-block w-40">DEVELOPER</span>
                     <a
                       href="https://bsky.app/profile/kvndvn.social"
                       class="underline text-blue-500"
