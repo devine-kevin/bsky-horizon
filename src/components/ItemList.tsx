@@ -189,6 +189,16 @@ const ItemList = (props) => {
                         data={profileData()}
                         sortBy={sortBy()}
                       />
+                      <div>
+                        <a
+                          href={`https://cred.blue/${item.subject.handle}`}
+                          class="text-blue-500"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          cred.blue/{item.subject.handle}
+                        </a>
+                      </div>
                     </Show>
                   </div>
                 </Show>
