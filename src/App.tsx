@@ -1,5 +1,6 @@
 import { Router, Route } from '@solidjs/router'
 import Home from './views/Home'
+import About from './views/About'
 import RecordView from './views/RecordView'
 import 'virtual:uno.css'
 import './styles/tailwind-compat.css'
@@ -12,6 +13,10 @@ function App() {
       <Route
         path="/"
         component={Home}
+      />
+      <Route
+        path="/about"
+        component={About}
       />
       <Route
         path="/:at/:repo/:collection/:rkey"

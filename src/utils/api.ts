@@ -1,3 +1,11 @@
+import { CredentialManager, XRPC } from '@atcute/client'
+import { DidDocument } from '@atcute/client/utils/did'
+import { createStore } from 'solid-js/store'
+
+const didPDSCache: Record<string, string> = {}
+const didDocCache: Record<string, DidDocument> = {}
+const [labelerCache, setLabelerCache] = createStore<Record<string, string>>({})
+
 const getList = async (uri: string) => {
   try {
     const uriParts = uri.replace('at://', '').split('/')
@@ -35,6 +43,7 @@ const getStarterPack = async (uri: string) => {
   }
 }
 
+// https://public.api.bsky.app/xrpc/
 const getProfile = async (did: string) => {
   try {
     const response = await fetch(
@@ -82,6 +91,44 @@ const getProfiles = async (actors: string[]) => {
   return allProfiles
 }
 
+const listRecords = async (
+  did: string,
+  collection: string,
+  cursor: string | undefined
+) => {
+  let pds: string
+  let rpc: XRPC
+  pds = await resolvePDS(did)
+  rpc = new XRPC({ handler: new CredentialManager({ service: pds }) })
+  rpc.get('com.atproto.repo.listRecords', {
+    params: {
+      repo: did,
+      collection: collection,
+      limit: 100,
+      cursor: cursor,
+    },
+  })
+}
+
+const fetchRedirectedUri = async (uri: string) => {
+  try {
+    const response = await fetch(
+      `https://kvndvn.social/api/goBsky?url=${uri}`,
+      {
+        method: 'GET',
+        mode: 'cors',
+      }
+    )
+    const data = await response.json()
+    if (!data.location) {
+      throw new Error('List location not found')
+    }
+    return data.location.replace('start', 'starter-pack')
+  } catch (error) {
+    throw new Error('Invalid URI: ' + uri)
+  }
+}
+
 const normalizeUri = async (uri: string) => {
   let authority: string
   let collection: string
@@ -124,25 +171,6 @@ const normalizeUri = async (uri: string) => {
   return `at://${authority}/${collection}/${rkey}`
 }
 
-const fetchRedirectedUri = async (uri: string) => {
-  try {
-    const response = await fetch(
-      `https://kvndvn.social/api/goBsky?url=${uri}`,
-      {
-        method: 'GET',
-        mode: 'cors',
-      }
-    )
-    const data = await response.json()
-    if (!data.location) {
-      throw new Error('List location not found')
-    }
-    return data.location.replace('start', 'starter-pack')
-  } catch (error) {
-    throw new Error('Invalid URI: ' + uri)
-  }
-}
-
 const resolveHandle = async (handle: string) => {
   if (handle.startsWith('did:')) {
     return handle
@@ -159,6 +187,26 @@ const resolveHandle = async (handle: string) => {
   } catch (error) {
     throw error
   }
+}
+
+const resolvePDS = async (did: string) => {
+  const res = await fetch(
+    did.startsWith('did:web')
+      ? `https://${did.split(':')[2]}/.well-known/did.json`
+      : 'https://plc.directory/' + did
+  )
+  return res.json().then((doc: DidDocument) => {
+    if (!doc.service) throw new Error('No PDS found')
+    for (const service of doc.service) {
+      if (service.id === '#atproto_pds') {
+        didPDSCache[did] = service.serviceEndpoint.toString()
+        didDocCache[did] = doc
+      }
+      if (service.id === '#atproto_labeler')
+        setLabelerCache(did, service.serviceEndpoint.toString())
+    }
+    return didPDSCache[did]
+  })
 }
 
 export {
