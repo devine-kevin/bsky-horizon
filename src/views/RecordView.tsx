@@ -2,6 +2,7 @@ import { createEffect, createSignal } from 'solid-js'
 import { useParams } from '@solidjs/router'
 import { getList, getStarterPack, normalizeUri } from '../utils/api.js'
 import PageHeader from '../components/PageHeader'
+import SideNav from '../components/SideNav'
 import JsonTree from '../components/JsonTree'
 import ListDetails from '../components/ListDetails'
 import ItemList from '../components/ItemList'
@@ -12,9 +13,11 @@ async function getRecord(args) {
   if (args.includes('app.bsky.graph.starterpack')) {
     data = await getStarterPack(uri)
     data.collection = 'app.bsky.graph.starterpack'
+    data.handle = data.starterPack.creator.handle
   } else {
     data = await getList(uri)
     data.collection = 'app.bsky.graph.list'
+    data.handle = data.list.creator.handle
   }
   return data
 }
@@ -48,25 +51,25 @@ function RecordView() {
       class="w-full"
     >
       <PageHeader />
-      <Show when={loading()}>
-        <div class="mt-4 p-2 text-gray-500 text-center">Searching...</div>
-      </Show>
-      <Show when={error()}>
-        <div class="mt-4 p-2 text-red-500 text-center">{error()}</div>
-      </Show>
-      <Show when={record()}>
-        <div class="mt-4 p-2">
-          <Show when={record().collection === 'app.bsky.graph.starterpack'}>
-            <JsonTree data={record().starterPack} />
-          </Show>
-          <Show when={record().collection === 'app.bsky.graph.list'}>
-            <ListDetails list={record().list} />
-          </Show>
-          <Show when={record().items?.length}>
-            <ItemList items={record().items} />
-          </Show>
-        </div>
-      </Show>
+      <div class="flex">
+        <Show when={error()}>
+          <div class="mt-1 p-2 text-red-500 text-center">{error()}</div>
+        </Show>
+        <Show when={record()}>
+          <SideNav handle={record().handle} />
+          <div class="p-2">
+            <Show when={record().collection === 'app.bsky.graph.starterpack'}>
+              <JsonTree data={record().starterPack} />
+            </Show>
+            <Show when={record().collection === 'app.bsky.graph.list'}>
+              <ListDetails list={record().list} />
+            </Show>
+            <Show when={record().items?.length}>
+              <ItemList items={record().items} />
+            </Show>
+          </div>
+        </Show>
+      </div>
     </div>
   )
 }

@@ -38,7 +38,7 @@ function ProfileView() {
   const [error, setError] = createSignal<string | null>(null)
   const [loading, setLoading] = createSignal(false)
 
-  const [isNavOpen, setIsNavOpen] = createSignal(false)
+  const [isNavOpen, setIsNavOpen] = createSignal(true)
   const [expandPacks, setExpandPacks] = createSignal(false)
   const [expandLists, setExpandLists] = createSignal(false)
   const [expandFeeds, setExpandFeeds] = createSignal(false)
@@ -49,7 +49,7 @@ function ProfileView() {
       try {
         const data = await getRecord([params.handle])
         console.log(data)
-        setRecord(data ?? null) // Ensure it's never undefined
+        setRecord(data ?? null)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error')
       } finally {
@@ -72,98 +72,7 @@ function ProfileView() {
       </Show>
       <Show when={record()}>
         <div class="flex">
-          <button
-            class="bg-gray-700 rounded mr-1 text-xs align-top cursor-pointer"
-            onClick={() => setIsNavOpen(!isNavOpen())}
-          >
-            {isNavOpen() ? '▼' : '▶'}
-          </button>
-          <div
-            class={`border border-gray-700 rounded h-screen transition-all duration-300 ease-in-out overflow-y-scroll overscroll-y-auto overscroll-x-contain no-scrollbar ${
-              isNavOpen() ? 'w-sm text-xs pl-2 pr-2' : 'w-0 p-0'
-            }`}
-          >
-            <Show when={isNavOpen()}>
-              <div class="mb-2 mt-2">
-                <div class="mb-2 text-md font-bold uppercase">Profile</div>
-                <div class="text-orange font-bold">{params.handle}</div>
-              </div>
-              <ul class="list-none p-0 m-0">
-                <li>
-                  <button
-                    class="bg-inherit mr-1 text-xs align-top cursor-pointer"
-                    onClick={() => setExpandPacks(!expandPacks())}
-                  >
-                    {expandPacks() ? '▼' : '▶'}
-                  </button>
-                  <strong class="pr-1">Packs:</strong>
-                  <Show when={expandPacks()}>
-                    <ul class="list-none p-0 m-0">
-                      <For each={record().starterPacks}>
-                        {(starterPack) => (
-                          <li class="rounded p-1 hover:bg-slate-700 hover:outline hover:outline-slate-500">
-                            <a
-                              href={`/${starterPack.uri.replace(
-                                'at://',
-                                'at/'
-                              )}`}
-                            >
-                              {starterPack.record.name}
-                            </a>
-                          </li>
-                        )}
-                      </For>
-                    </ul>
-                  </Show>
-                </li>
-                <li>
-                  <button
-                    class="bg-inherit mr-1 text-xs align-top cursor-pointer"
-                    onClick={() => setExpandLists(!expandLists())}
-                  >
-                    {expandLists() ? '▼' : '▶'}
-                  </button>
-                  <strong class="pr-1">Lists:</strong>
-                  <Show when={expandLists()}>
-                    <ul class="list-none p-0 m-0">
-                      <For each={record().lists}>
-                        {(list) => (
-                          <li class="rounded p-1 hover:bg-slate-700 hover:outline hover:outline-slate-500">
-                            <a href={`/${list.uri.replace('at://', 'at/')}`}>
-                              {list.name}
-                            </a>
-                          </li>
-                        )}
-                      </For>
-                    </ul>
-                  </Show>
-                </li>
-                <li>
-                  <button
-                    class="bg-inherit mr-1 text-xs align-top cursor-pointer"
-                    onClick={() => setExpandFeeds(!expandFeeds())}
-                  >
-                    {expandFeeds() ? '▼' : '▶'}
-                  </button>
-                  <strong class="pr-1">Feeds:</strong>
-                  <Show when={expandFeeds()}>
-                    <ul class="list-none p-0 m-0">
-                      <For each={record().feeds}>
-                        {(feed) => (
-                          <li class="rounded p-1 hover:bg-slate-700 hover:outline hover:outline-slate-500">
-                            <a href={`/${feed.uri.replace('at://', 'at/')}`}>
-                              {feed.displayName}
-                            </a>
-                          </li>
-                        )}
-                      </For>
-                    </ul>
-                  </Show>
-                </li>
-              </ul>
-            </Show>
-          </div>
-
+          <SideNav handle={params.handle} />
           <div class="w-full p-2 overflow-y-scroll overscroll-y-auto overscroll-x-contain no-scrollbar">
             <JsonTree data={record().profile} />
           </div>
