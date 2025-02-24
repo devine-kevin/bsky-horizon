@@ -73,7 +73,7 @@ function ProfileView() {
       <Show when={record()}>
         <div class="flex">
           <SideNav handle={params.handle} />
-          <div class="w-full p-2 overflow-y-scroll overscroll-y-auto overscroll-x-contain no-scrollbar">
+          <div class="p-2 overflow-y-scroll overscroll-y-auto overscroll-x-contain no-scrollbar">
             <JsonTree data={record().profile} />
           </div>
         </div>

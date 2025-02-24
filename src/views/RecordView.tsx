@@ -57,7 +57,7 @@ function RecordView() {
         </Show>
         <Show when={record()}>
           <SideNav handle={record().handle} />
-          <div class="p-2">
+          <div class="p-2 overflow-scroll">
             <Show when={record().collection === 'app.bsky.graph.starterpack'}>
               <JsonTree data={record().starterPack} />
             </Show>

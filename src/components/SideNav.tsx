@@ -33,8 +33,8 @@ const SideNav = (props) => {
   const [expandFeeds, setExpandFeeds] = createSignal(false)
 
   return (
-    <div class="flex max-w-screen">
-      <div>
+    <div class="flex">
+      <div class="pl-1">
         <button
           class="h-screen bg-gray-700 rounded mr-1 text-xs align-top cursor-pointer"
           onClick={() => setIsNavOpen(!isNavOpen())}
