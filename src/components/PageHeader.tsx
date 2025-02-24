@@ -9,7 +9,12 @@ function PageHeader() {
           <a href="/">home</a>
         </div>
         <div>
-          <a href="/">bsky - horizon</a>
+          <a
+            href="/"
+            class="hover:underline"
+          >
+            bsky - horizon
+          </a>
         </div>
         <div class="i-about">
           <a href="/about">about</a>

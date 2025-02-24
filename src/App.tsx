@@ -1,7 +1,9 @@
 import { Router, Route } from '@solidjs/router'
 import Home from './views/Home'
 import About from './views/About'
+import ProfileView from './views/ProfileView'
 import RecordView from './views/RecordView'
+import PageHeader from './components/PageHeader'
 import 'virtual:uno.css'
 import './styles/tailwind-compat.css'
 import './styles/index.css'
@@ -17,6 +19,10 @@ function App() {
       <Route
         path="/about"
         component={About}
+      />
+      <Route
+        path="/:at/:handle"
+        component={ProfileView}
       />
       <Route
         path="/:at/:repo/:collection/:rkey"

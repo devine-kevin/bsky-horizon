@@ -28,13 +28,28 @@ const getList = async (uri: string) => {
   }
 }
 
+const getLists = async (did: string) => {
+  try {
+    const response = await fetch(
+      `https://public.api.bsky.app/xrpc/app.bsky.graph.getLists?actor=${did}`
+    )
+    if (!response.ok) {
+      throw new Error('Lists not found')
+    }
+    const data = await response.json()
+    return data.lists
+  } catch (error) {
+    throw error
+  }
+}
+
 const getStarterPack = async (uri: string) => {
   try {
     const response = await fetch(
       `https://public.api.bsky.app/xrpc/app.bsky.graph.getStarterPack?starterPack=${uri}`
     )
     if (!response.ok) {
-      throw new Error('List not found')
+      throw new Error('Starter Pack not found')
     }
     const data = await response.json()
     return data
@@ -43,7 +58,36 @@ const getStarterPack = async (uri: string) => {
   }
 }
 
-// https://public.api.bsky.app/xrpc/
+const getActorFeeds = async (did: string) => {
+  try {
+    const response = await fetch(
+      `https://public.api.bsky.app/xrpc/app.bsky.feed.getActorFeeds?actor=${did}`
+    )
+    if (!response.ok) {
+      throw new Error('Starter Packs not found')
+    }
+    const data = await response.json()
+    return data.feeds
+  } catch (error) {
+    throw error
+  }
+}
+
+const getActorStarterPacks = async (did: string) => {
+  try {
+    const response = await fetch(
+      `https://public.api.bsky.app/xrpc/app.bsky.graph.getActorStarterPacks?actor=${did}`
+    )
+    if (!response.ok) {
+      throw new Error('Starter Packs not found')
+    }
+    const data = await response.json()
+    return data.starterPacks
+  } catch (error) {
+    throw error
+  }
+}
+
 const getProfile = async (did: string) => {
   try {
     const response = await fetch(
@@ -134,7 +178,11 @@ const normalizeUri = async (uri: string) => {
   let collection: string
   let rkey: string
 
-  if (uri.includes('go.bsky.app')) {
+  if (
+    ['go.bsky.app', 'starter-pack-short'].some((substring) =>
+      uri.includes(substring)
+    )
+  ) {
     try {
       uri = await fetchRedirectedUri(uri)
     } catch (error) {
@@ -210,7 +258,10 @@ const resolvePDS = async (did: string) => {
 }
 
 export {
+  getActorFeeds,
+  getActorStarterPacks,
   getList,
+  getLists,
   getProfile,
   getProfiles,
   getStarterPack,
