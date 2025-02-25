@@ -69,20 +69,28 @@ export function UserProvider(props) {
   }
 
   const retrieveSession = async () => {
-    console.log('retrieveSession')
     const init = async (): Promise<Session | undefined> => {
-      params = new URLSearchParams(window.location.hash.slice(1))
+      const params = new URLSearchParams(location.hash.slice(1))
+      console.log(
+        'params',
+        params.get('state'),
+        params.get('code'),
+        params.get('error')
+      )
 
       if (params.has('state') && (params.has('code') || params.has('error'))) {
         //history.replaceState(null, '', location.pathname + location.search)
 
-        const session = await finalizeAuthorization(params)
-        console.log('session', session)
-        const did = session.info.sub
-        console.log('did', did)
-
-        localStorage.setItem('lastSignedIn', did)
-        return session
+        try {
+          const session = await finalizeAuthorization(params)
+          const did = session.info.sub
+          console.log('did', did)
+          localStorage.setItem('lastSignedIn', did)
+          return session
+        } catch (e) {
+          console.error(e)
+          throw e
+        }
       } else {
         const lastSignedIn = localStorage.getItem('lastSignedIn')
         if (lastSignedIn) {
