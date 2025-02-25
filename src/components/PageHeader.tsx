@@ -21,9 +21,7 @@ function PageHeader() {
         <div class="i-about">
           <a href="/about">about</a>
         </div>
-        <div>
-          <LoginButton />
-        </div>
+        <div></div>
       </div>
     </div>
   )
