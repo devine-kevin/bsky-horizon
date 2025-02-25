@@ -39,14 +39,16 @@ export function UserProvider(props) {
   const login = async (data) => {
     try {
       const { identity, metadata } = await resolveFromIdentity(data.handle)
-      console.log(import.meta.env)
+
       const authUrl = await createAuthorizationUrl({
         metadata: metadata,
         identity: identity,
         scope: import.meta.env.VITE_OAUTH_SCOPE,
       })
+
       await new Promise((resolve) => setTimeout(resolve, 250))
       location.assign(authUrl)
+
       await new Promise((_resolve, reject) => {
         const listener = () => {
           reject(new Error(`user aborted the login request`))
