@@ -69,18 +69,15 @@ export function UserProvider(props) {
   }
 
   const retrieveSession = async () => {
+    console.log('retrieveSession')
     const init = async (): Promise<Session | undefined> => {
-      if (window.location.hash.includes('code=')) {
-        params = new URLSearchParams(window.location.hash.slice(1)) // Extract from hash
-      } else {
-        params = new URLSearchParams(window.location.search) // Extract from query params
-      }
-      console.log('params', params)
+      params = new URLSearchParams(window.location.hash.slice(1))
 
       if (params.has('state') && (params.has('code') || params.has('error'))) {
-        history.replaceState(null, '', location.pathname + location.search)
+        //history.replaceState(null, '', location.pathname + location.search)
 
         const session = await finalizeAuthorization(params)
+        console.log('session', session)
         const did = session.info.sub
         console.log('did', did)
 
