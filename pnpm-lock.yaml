@@ -11,6 +11,9 @@ importers:
       '@atcute/client':
         specifier: ^2.0.7
         version: 2.0.7
+      '@atcute/oauth-browser-client':
+        specifier: ^1.0.13
+        version: 1.0.13
       '@atproto/api':
         specifier: ^0.14.4
         version: 0.14.4
@@ -57,6 +60,9 @@ packages:
 
   '@atcute/client@2.0.7':
     resolution: {integrity: sha512-bvNahrCGvhZw/EIx0HU/GOoKZEnUaAppbuZh7cu+VsOFA2tdFLnZJed9Hagh5Yz/eUX7QUh5NB4dRTRUdggSLQ==}
+
+  '@atcute/oauth-browser-client@1.0.13':
+    resolution: {integrity: sha512-JxQKl9Vo1V8poxvR9uKS8bkBv8t53DIH4lCbaih6yn9u7fM62ZC/0x/9KoGWSNqpp3R3U0y/DOQQfdC9Y4GEGQ==}
 
   '@atproto/api@0.14.4':
     resolution: {integrity: sha512-R/9xmAs8noZK//wmCoHow99Eg1g5J9y36IYmrU3aRApa0JkSVOfoCwwY42gN+LXDGSY1hP50hyRe8ftUVUMFkA==}
@@ -1203,6 +1209,10 @@ snapshots:
   '@antfu/utils@8.1.0': {}
 
   '@atcute/client@2.0.7': {}
+
+  '@atcute/oauth-browser-client@1.0.13':
+    dependencies:
+      '@atcute/client': 2.0.7
 
   '@atproto/api@0.14.4':
     dependencies:

@@ -1,3 +1,5 @@
+import { createSignal } from 'solid-js'
+import LoginButton from './LoginButton'
 import { useCronitor } from '../utils/cronitor'
 
 function PageHeader() {
@@ -18,6 +20,9 @@ function PageHeader() {
         </div>
         <div class="i-about">
           <a href="/about">about</a>
+        </div>
+        <div>
+          <LoginButton />
         </div>
       </div>
     </div>

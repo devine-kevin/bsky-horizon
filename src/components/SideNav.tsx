@@ -5,6 +5,8 @@ import {
   getLists,
   resolveHandle,
 } from '../utils/api.js'
+import { useUser } from '../context/UserProvider'
+import { XRPC } from '@atcute/client'
 
 async function getNav(handle) {
   let did: string
@@ -32,11 +34,17 @@ const SideNav = (props) => {
   const [expandLists, setExpandLists] = createSignal(false)
   const [expandFeeds, setExpandFeeds] = createSignal(false)
 
+  const { agent } = useUser()
+  let rpc
+  if (agent) {
+    rpc = new XRPC({ handler: agent })
+  }
+
   return (
     <div class="flex">
       <div class="pl-1">
         <button
-          class="h-screen bg-gray-700 rounded mr-1 text-xs align-top cursor-pointer"
+          class="h-screen bg-gray-700 rounded mr-1 text-xs align-top cursor-pointer hover:w-4"
           onClick={() => setIsNavOpen(!isNavOpen())}
         >
           {isNavOpen() ? '▼' : '▶'}
