@@ -71,6 +71,7 @@ export function UserProvider(props) {
   const retrieveSession = async () => {
     const init = async (): Promise<Session | undefined> => {
       const params = new URLSearchParams(location.hash.slice(1))
+      console.log('params', params)
 
       if (params.has('state') && (params.has('code') || params.has('error'))) {
         history.replaceState(null, '', location.pathname + location.search)
