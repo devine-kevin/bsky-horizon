@@ -2,7 +2,7 @@
   "client_id": "https://bskyhorizon.top/oauth/client-metadata.json",
   "client_name": "bskyhorizon",
   "client_uri": "https://bskyhorizon.top",
-  "redirect_uris": ["https://bskyhorizon.top"],
+  "redirect_uris": ["https://bskyhorizon.top/"],
   "scope": "atproto transition:generic",
   "grant_types": ["authorization_code", "refresh_token"],
   "response_types": ["code"],
