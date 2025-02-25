@@ -70,7 +70,11 @@ export function UserProvider(props) {
 
   const retrieveSession = async () => {
     const init = async (): Promise<Session | undefined> => {
-      const params = new URLSearchParams(location.hash.slice(1))
+      if (window.location.hash.includes('code=')) {
+        params = new URLSearchParams(window.location.hash.slice(1)) // Extract from hash
+      } else {
+        params = new URLSearchParams(window.location.search) // Extract from query params
+      }
       console.log('params', params)
 
       if (params.has('state') && (params.has('code') || params.has('error'))) {
