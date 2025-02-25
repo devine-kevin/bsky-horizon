@@ -20,22 +20,23 @@ configureOAuth({
   },
 })
 
+let agent: OAuthUserAgent
+const lastSignedIn = localStorage.getItem('lastSignedIn')
+
+if (lastSignedIn) {
+  try {
+    const session = await getSession(lastSignedIn as At.DID)
+    agent = new OAuthUserAgent(session)
+  } catch (err) {
+    deleteStoredSession(lastSignedIn as At.DID)
+    localStorage.removeItem('lastSignedIn')
+    throw err
+  }
+}
+
+export { agent }
+
 export function UserProvider(props) {
-  const [user, setUser] = createSignal(null)
-  let agent: OAuthUserAgent
-
-  onMount(async () => {
-    const lastSignedIn = localStorage.getItem('lastSignedIn')
-    const userStore = localStorage.getItem('user')
-    console.log('lastSignedIn', lastSignedIn)
-    console.log('userStore', userStore)
-    try {
-      await retrieveSession()
-    } catch (e) {
-      console.error(e)
-    }
-  })
-
   const login = async (data) => {
     try {
       const { identity, metadata } = await resolveFromIdentity(data.handle)
@@ -59,34 +60,22 @@ export function UserProvider(props) {
       console.error(e)
       throw e
     }
-    setUser(data.handle)
-    localStorage.setItem('user', JSON.stringify(handle))
   }
 
   const logout = () => {
-    setUser(null)
     deleteStoredSession(lastSignedIn as At.DID)
     localStorage.removeItem('lastSignedIn')
-    localStorage.removeItem('user')
   }
 
   const retrieveSession = async () => {
     const init = async (): Promise<Session | undefined> => {
       const params = new URLSearchParams(location.hash.slice(1))
-
       if (params.has('state') && (params.has('code') || params.has('error'))) {
         history.replaceState(null, '', location.pathname + location.search)
-
-        try {
-          const session = await finalizeAuthorization(params)
-          const did = session.info.sub
-          console.log('did', did)
-          localStorage.setItem('lastSignedIn', did)
-          return session
-        } catch (e) {
-          console.error(e)
-          throw e
-        }
+        const session = await finalizeAuthorization(params)
+        const did = session.info.sub
+        localStorage.setItem('lastSignedIn', did)
+        return session
       } else {
         const lastSignedIn = localStorage.getItem('lastSignedIn')
         if (lastSignedIn) {
@@ -100,16 +89,12 @@ export function UserProvider(props) {
         }
       }
     }
-
     const session = await init().catch(() => {})
-    console.log('session', session)
-    if (session) {
-      agent = new OAuthUserAgent(session)
-    }
+    return session
   }
 
   return (
-    <UserContext.Provider value={{ agent, user, login, logout }}>
+    <UserContext.Provider value={{ login, logout, retrieveSession }}>
       {props.children}
     </UserContext.Provider>
   )

@@ -1,7 +1,7 @@
 import PageHeader from '../components/PageHeader'
 import Search from '../components/Search'
 
-function Home() {
+function About() {
   return (
     <div
       id="main"
@@ -72,4 +72,4 @@ function Home() {
   )
 }
 
-export default Home
+export default About
