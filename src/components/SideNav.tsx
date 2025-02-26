@@ -5,8 +5,30 @@ import {
   getLists,
   resolveHandle,
 } from '../utils/api.js'
-import { useUser } from '../context/UserProvider'
+import { agent } from '../context/UserProvider'
 import { XRPC } from '@atcute/client'
+
+async function getUser() {
+  if (!agent) return null
+  try {
+    let rpc = new XRPC({ handler: agent })
+    const [profile, lists, starterPacks] = await Promise.all([
+      rpc.get('app.bsky.actor.getProfile', { params: { actor: agent.sub } }),
+      rpc.get('app.bsky.graph.getLists', { params: { actor: agent.sub } }),
+      rpc.get('app.bsky.graph.getActorStarterPacks', {
+        params: { actor: agent.sub },
+      }),
+    ])
+    return {
+      profile: profile.data,
+      lists: lists.data.lists,
+      starterPacks: starterPacks.data,
+    }
+  } catch (error) {
+    console.error('Error fetching user data:', error)
+    return null
+  }
+}
 
 async function getNav(handle) {
   let did: string
@@ -29,16 +51,13 @@ async function getNav(handle) {
 
 const SideNav = (props) => {
   const [nav] = createResource(props.handle, getNav)
+  const [user] = createResource(getUser)
   const [isNavOpen, setIsNavOpen] = createSignal(false)
   const [expandPacks, setExpandPacks] = createSignal(false)
   const [expandLists, setExpandLists] = createSignal(false)
   const [expandFeeds, setExpandFeeds] = createSignal(false)
 
-  const { agent } = useUser()
-  let rpc
-  if (agent) {
-    rpc = new XRPC({ handler: agent })
-  }
+  const [expandUserLists, setExpandUserLists] = createSignal(false)
 
   return (
     <div class="flex">
@@ -160,6 +179,53 @@ const SideNav = (props) => {
                                 </a>
                               </li>
                             )}
+                          </For>
+                        </ul>
+                      </Show>
+                    </div>
+                  </div>
+                </li>
+              </Show>
+            </ul>
+          </Show>
+          <Show when={user()}>
+            <div class="mb-2 mt-2">
+              <div class="mb-2 text-md font-bold uppercase">Me</div>
+              <div class="text-orange font-bold">{user().profile.handle}</div>
+            </div>
+            {/* Lists */}
+            <ul class="list-none p-0 m-0">
+              <Show when={user().lists}>
+                <li>
+                  <div class="flex">
+                    <div>
+                      <button
+                        class="bg-inherit mr-1 text-xs align-top cursor-pointer"
+                        onClick={() => setExpandUserLists(!expandLists())}
+                      >
+                        {expandUserLists() ? '▼' : '▶'}
+                      </button>
+                    </div>
+                    <div>
+                      <strong class="pr-1">Lists:</strong>
+                      <Show when={expandUserLists()}>
+                        <ul class="m-y-1 list-none p-0 m-0">
+                          <For each={user().lists}>
+                            {(list) => {
+                              console.log('list', list)
+                              return (
+                                <li class="rounded hover:bg-slate-700 hover:outline hover:outline-slate-500">
+                                  <a
+                                    href={`/${list.uri.replace(
+                                      'at://',
+                                      'at/'
+                                    )}`}
+                                  >
+                                    {list.name}
+                                  </a>
+                                </li>
+                              )
+                            }}
                           </For>
                         </ul>
                       </Show>

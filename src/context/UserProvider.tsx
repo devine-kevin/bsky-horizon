@@ -62,9 +62,16 @@ export function UserProvider(props) {
     }
   }
 
-  const logout = () => {
-    deleteStoredSession(lastSignedIn as At.DID)
-    localStorage.removeItem('lastSignedIn')
+  const logout = async () => {
+    try {
+      const session = await getSession(did, { allowStale: true })
+      const userAgent = new OAuthUserAgent(session)
+      await userAgent.signOut()
+    } catch (err) {
+      deleteStoredSession(localStorage.getItem('lastSignedIn'))
+    } finally {
+      localStorage.removeItem('lastSignedIn')
+    }
   }
 
   const retrieveSession = async () => {
