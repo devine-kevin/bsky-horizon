@@ -5,11 +5,11 @@ import {
   getLists,
   resolveHandle,
 } from '../utils/api.js'
-import { agent } from '../context/UserProvider'
+import { useAuth } from '../context/AuthContext'
 import { XRPC } from '@atcute/client'
 
-async function getUser() {
-  if (!agent) return null
+async function getUser(agent) {
+  if (!agent) return {}
   try {
     let rpc = new XRPC({ handler: agent })
     const [profile, lists, starterPacks] = await Promise.all([
@@ -31,11 +31,7 @@ async function getUser() {
 }
 
 async function getNav(handle) {
-  let did: string
-  did = handle.replace('at://', '').startsWith('did:')
-    ? handle
-    : await resolveHandle(handle)
-
+  const did = await resolveHandle(handle)
   try {
     const [lists, starterPacks, feeds] = await Promise.all([
       getLists(did),
@@ -50,13 +46,16 @@ async function getNav(handle) {
 }
 
 const SideNav = (props) => {
+  const authStore = useAuth()
+  const { state } = authStore
+
   const [nav] = createResource(props.handle, getNav)
-  const [user] = createResource(getUser)
+  const [user] = createResource(state.agent, getUser)
+
   const [isNavOpen, setIsNavOpen] = createSignal(false)
   const [expandPacks, setExpandPacks] = createSignal(false)
   const [expandLists, setExpandLists] = createSignal(false)
   const [expandFeeds, setExpandFeeds] = createSignal(false)
-
   const [expandUserLists, setExpandUserLists] = createSignal(false)
 
   return (
@@ -201,7 +200,7 @@ const SideNav = (props) => {
                     <div>
                       <button
                         class="bg-inherit mr-1 text-xs align-top cursor-pointer"
-                        onClick={() => setExpandUserLists(!expandLists())}
+                        onClick={() => setExpandUserLists(!expandUserLists())}
                       >
                         {expandUserLists() ? '▼' : '▶'}
                       </button>
