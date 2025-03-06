@@ -50,7 +50,6 @@ let agent: OAuthUserAgent
 
 try {
   const session = await retrieveSession()
-  console.log('session', session)
   if (session) {
     agent = new OAuthUserAgent(session)
   }
@@ -66,14 +65,11 @@ export function UserProvider(props) {
   const login = async (data) => {
     try {
       const { identity, metadata } = await resolveFromIdentity(data.handle)
-      console.log('identity', identity)
-
       const authUrl = await createAuthorizationUrl({
         metadata: metadata,
         identity: identity,
         scope: import.meta.env.VITE_OAUTH_SCOPE,
       })
-      console.log('authUrl', authUrl)
 
       await new Promise((resolve) => setTimeout(resolve, 250))
       location.assign(authUrl)
@@ -85,7 +81,6 @@ export function UserProvider(props) {
         window.addEventListener('pageshow', listener, { once: true })
       })
     } catch (e) {
-      console.error(e)
       throw e
     }
   }

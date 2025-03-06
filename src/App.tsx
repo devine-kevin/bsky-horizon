@@ -1,13 +1,15 @@
+import { lazy } from 'solid-js';
 import { Router, Route } from '@solidjs/router'
 import Home from './views/Home'
-import About from './views/About'
-import ProfileView from './views/ProfileView'
-import RecordView from './views/RecordView'
 import PageHeader from './components/PageHeader'
 import 'virtual:uno.css'
 import './styles/tailwind-compat.css'
 import './styles/index.css'
 import './styles/icons.css'
+
+const About = lazy(() => import('./views/About'));
+const ProfileView = lazy(() => import('./views/ProfileView'));
+const RecordView = lazy(() => import('./views/RecordView'));
 
 function App() {
   return (

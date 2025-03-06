@@ -220,9 +220,11 @@ const normalizeUri = async (uri: string) => {
 }
 
 const resolveHandle = async (handle: string) => {
+  handle = handle.replace('att://', '')
   if (handle.startsWith('did:')) {
     return handle
   }
+
   try {
     const response = await fetch(
       `https://public.api.bsky.app/xrpc/com.atproto.identity.resolveHandle?handle=${handle}`

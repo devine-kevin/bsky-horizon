@@ -11,14 +11,9 @@ import PageHeader from '../components/PageHeader'
 import SideNav from '../components/SideNav'
 import JsonTree from '../components/JsonTree'
 
-async function getRecord(args) {
-  const handle = args[0]
-  let did: string
-  did = handle.replace('at://', '').startsWith('did:')
-    ? handle
-    : await resolveHandle(handle)
-
+async function fetchData(handle: string) {
   try {
+    const did = await resolveHandle(handle)
     const [profile, lists, starterPacks, feeds] = await Promise.all([
       getProfile(did),
       getLists(did),
@@ -38,17 +33,11 @@ function ProfileView() {
   const [error, setError] = createSignal<string | null>(null)
   const [loading, setLoading] = createSignal(false)
 
-  const [isNavOpen, setIsNavOpen] = createSignal(true)
-  const [expandPacks, setExpandPacks] = createSignal(false)
-  const [expandLists, setExpandLists] = createSignal(false)
-  const [expandFeeds, setExpandFeeds] = createSignal(false)
-
   createEffect(() => {
     ;(async () => {
       setLoading(true)
       try {
-        const data = await getRecord([params.handle])
-        console.log(data)
+        const data = await fetchData(params.handle)
         setRecord(data ?? null)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error')

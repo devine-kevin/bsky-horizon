@@ -1,6 +1,6 @@
 import { render } from 'solid-js/web'
 import App from './App'
-import { UserProvider } from './context/UserProvider'
+import { AuthProvider } from './context/AuthContext'
 
 const root = document.getElementById('root')
 
@@ -10,9 +10,9 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
 
 render(
   () => (
-    <UserProvider>
+    <AuthProvider>
       <App />
-    </UserProvider>
+    </AuthProvider>
   ),
   root!
 )
