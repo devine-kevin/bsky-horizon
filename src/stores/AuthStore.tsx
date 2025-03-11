@@ -21,7 +21,7 @@ configureOAuth({
 export function createAuthStore() {
   const [state, setState] = createStore({
     user: null,
-    agent: OAuthUserAgent,
+    agent: null,
     isLoggedIn: false,
     isModalOpen: false,
     handle: '',
