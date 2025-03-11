@@ -1,6 +1,5 @@
 import PageHeader from '../components/PageHeader'
 import Search from '../components/Search'
-import { agent } from '../context/UserProvider'
 
 function Home() {
   return (
