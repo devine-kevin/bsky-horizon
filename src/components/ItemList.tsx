@@ -1,6 +1,8 @@
 import { createSignal, createMemo, createResource, Show, For } from 'solid-js'
-import { getProfile, getProfiles } from '../utils/api.js'
+import { getFollows, getProfile, getProfiles } from '../utils/api.js'
 import JsonTree from './JsonTree'
+import { useAuth } from '../context/AuthContext'
+import FollowIndicator from './FollowIndicator'
 
 import { Select } from '@thisbeyond/solid-select'
 import '@thisbeyond/solid-select/style.css'
@@ -13,10 +15,28 @@ const fetchProfiles = async (dids: string) => {
     return { error: 'Failed to load data', message: error.message }
   }
 }
+async function fetchFollows(did, { value, refetching }) {
+  if (!did) return {}
+  try {
+    const response = await getFollows(did)
+    return response
+  } catch (error) {
+    console.error('Error fetching user data:', error)
+    return null
+  }
+}
+
 const ItemList = (props) => {
+  const authStore = useAuth()
+  const { state } = authStore
+
   const [showDropdown, setShowDropdown] = createSignal(false)
   const [sortBy, setSortBy] = createSignal('handle')
   const [sortOrder, setSortOrder] = createSignal('ASC')
+
+  const [following] = createResource(state.user, fetchFollows)
+  const isFollowing = (did) =>
+    following()?.some((profile) => profile.did === did)
 
   const [profiles] = createResource(
     () => props.items.map((item) => item.subject.did),
@@ -117,7 +137,11 @@ const ItemList = (props) => {
               >
                 <div class="flex justify-between">
                   <span>
-                    -{' '}
+                    {following.loading ? null : (
+                      <FollowIndicator
+                        isFollowing={isFollowing(item.subject.did)}
+                      />
+                    )}
                     <a
                       href={`https://bsky.app/profile/${item.subject.handle}`}
                       class="text-blue-500"

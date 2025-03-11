@@ -6,6 +6,31 @@ const didPDSCache: Record<string, string> = {}
 const didDocCache: Record<string, DidDocument> = {}
 const [labelerCache, setLabelerCache] = createStore<Record<string, string>>({})
 
+const getFollows = async (did: string) => {
+  const follows = []
+  let cursor
+  try {
+    do {
+      const params = new URLSearchParams({ actor: did })
+      if (cursor) params.append('cursor', cursor)
+      const response = await fetch(
+        `https://public.api.bsky.app/xrpc/app.bsky.graph.getFollows?${params.toString()}`
+      )
+      if (!response.ok) {
+        throw new Error(`Failed to fetch follows: ${response.statusText}`)
+      }
+      const data = await response.json()
+      if (data.follows) {
+        follows.push(...data.follows)
+      }
+      cursor = data.cursor
+    } while (cursor)
+    return follows
+  } catch (error) {
+    throw error
+  }
+}
+
 const getList = async (uri: string) => {
   try {
     const uriParts = uri.replace('at://', '').split('/')
@@ -262,6 +287,7 @@ const resolvePDS = async (did: string) => {
 export {
   getActorFeeds,
   getActorStarterPacks,
+  getFollows,
   getList,
   getLists,
   getProfile,

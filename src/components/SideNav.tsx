@@ -211,7 +211,6 @@ const SideNav = (props) => {
                         <ul class="m-y-1 list-none p-0 m-0">
                           <For each={user().lists}>
                             {(list) => {
-                              console.log('list', list)
                               return (
                                 <li class="rounded hover:bg-slate-700 hover:outline hover:outline-slate-500">
                                   <a
